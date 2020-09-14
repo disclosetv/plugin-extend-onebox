@@ -1,17 +1,3 @@
-# name: plugin-extend-onebox
-# about: Tell Onebox to render those extensions
-# version: 0.0.6
-# authors: @terrapop
-
-register_javascript <<JS
-$(document).on('click', '.ytlight', function() {
-    var iframe = $('<iframe src="'+$(this).data("embed-url")+'" scrolling="no" frameborder="0" style="border: none;"></iframe>');
-    // Replace the poster image with player
-    $(this).empty().append(iframe);
-});
-JS
-
-register_css <<CSS
 .onebox.third-party-video {
     border: none;
     padding: 0;
@@ -65,44 +51,3 @@ register_css <<CSS
   cursor: hand;
   cursor: pointer;
 }
-CSS
-
-Onebox = Onebox
-
-class Onebox::Engine::BitChuteOnebox
-  include Onebox::Engine
-  include Onebox::Engine::StandardEmbed
-
-  def self.priority
-    0
-  end
-
-  # Example https://www.bitchute.com/video/akUhtVvKpTw/
-  REGEXP = /^https?:\/\/(?:www\.)?bitchute\.com\/video\/(?<id>[0-9a-zA-z\-]+)\/(?:.)*$/
-  matches_regexp REGEXP
-  always_https
-
-  def id
-      @url.match(REGEXP)[:id];
-  end
-
-  def to_html
-    og = get_opengraph
-    video_url = "https://www.bitchute.com/video/#{id}/"
-    embed_url = "https://www.bitchute.com/embed/#{id}/"
-    return %{
-      <aside class="onebox third-party-video">
-          <article class="onebox-body">
-            <div class="ytlight" data-embed-url="#{embed_url}">
-                <img src="#{og.get_secure_image}" class="scale-image"/>
-                <span class="ytlight_circle"></span>
-            </div>
-          </article>
-       </aside>
-   }
-  end
-
-  def placeholder_html
-      to_html
-  end
-end
