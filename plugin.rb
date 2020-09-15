@@ -1,6 +1,6 @@
 # name: plugin-extend-onebox
 # about: Tell Onebox to render those extensions
-# version: 0.0.6
+# version: 0.1.0
 # authors: @terrapop
 
 register_javascript <<JS
